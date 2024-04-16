@@ -135,7 +135,7 @@ void setup(void) {
   }
 
   tft.begin(identifier);
-  tft.setRotation(2);
+  tft.setRotation(1);
 
   tft.fillScreen(BLACK);
 
@@ -156,11 +156,21 @@ void setup(void) {
 #define MINPRESSURE 10
 #define MAXPRESSURE 1000
 
+int xtouch = 0;
+int ytouch = 0;
+
 void loop()
 {
+  tft.fillRect(0, 0, 100, 100, RED);
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
+
+  // map the touch screen coordinates to our drawing coordinates.
+  xtouch = map(p.y, TS_MINY, TS_MAXY, 0, tft.width());
+  ytouch = map(p.x, TS_MINX, TS_MAXX, 0, tft.height());
+  
+  
 
   // if sharing pins, you'll need to fix the directions of the touchscreen pins
   //pinMode(XP, OUTPUT);
@@ -171,11 +181,22 @@ void loop()
   // we have some minimum pressure we consider 'valid'
   // pressure of 0 means no pressing!
   if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {
-    tft.println("you are touching");
-    delay (50);
-  }else{
+    Serial.print("x = ");
+    Serial.print(xtouch);
+    Serial.print(", y = ");
+    Serial.println(ytouch);
+
+    if (xtouch >= 0 && xtouch <= 100 && ytouch >= 0 && ytouch <= 100){
+      //tft.println("you are touching");
+      Serial.println("touching button");
+    }
+    
+    Serial.println("touching");
   
+    
   }
+  delay (50);
+  
   /*if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {
     /*
     Serial.print("X = "); Serial.print(p.x);
